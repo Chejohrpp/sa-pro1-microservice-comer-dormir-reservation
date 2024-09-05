@@ -17,7 +17,7 @@ FROM openjdk:21
 WORKDIR /app
 
   # Copia el archivo JAR generado por Maven en la etapa anterior
-COPY --from=build /app/target/reservation-microservice-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=build /app/target/reservation-microservices-0.0.1-SNAPSHOT.jar app.jar
 
 EXPOSE 8080
 
