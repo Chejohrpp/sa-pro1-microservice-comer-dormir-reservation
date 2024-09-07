@@ -6,6 +6,7 @@ import com.hrp.reservation.microservices.reservation.domain.ReservationStatus;
 import com.hrp.reservation.microservices.reservation.infrastructure.outputports.db.CheckInOutputPort;
 import com.hrp.reservation.microservices.reservation.infrastructure.outputports.db.CheckOutOutputPort;
 import com.hrp.reservation.microservices.reservation.infrastructure.outputports.db.ReservationClientOutputPort;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
@@ -70,5 +71,14 @@ public class MySqlReservationEntityOutputAdapter implements ReservationClientOut
     public Optional<Reservation> findById(Long id) {
         return jpaReservationEntityRepository.findById(id)
                 .map(ReservationEntity:: toDomain);
+    }
+
+    @Override
+    public Reservation updateState(Reservation reservation) {
+        ReservationEntity reservationEntity =  jpaReservationEntityRepository.findById(reservation.getId())
+                .orElseThrow(() -> new EntityNotFoundException("reservation not found"));
+        reservationEntity.setStatus(reservation.getStatus());
+        return  jpaReservationEntityRepository.save(reservationEntity)
+                .toDomain();
     }
 }

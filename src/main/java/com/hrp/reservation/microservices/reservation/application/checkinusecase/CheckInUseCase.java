@@ -41,6 +41,6 @@ public class CheckInUseCase implements CheckInInputPort {
         }
 
         //update the reservation
-        reservation = reservationClientOutputPort.save(reservation);
+        reservation = checkInOutputPort.updateState(reservation);
     }
 }

@@ -6,4 +6,5 @@ import java.util.Optional;
 
 public interface CheckOutOutputPort {
     Optional<Reservation> findById(Long id);
+    Reservation updateState(Reservation reservation);
 }

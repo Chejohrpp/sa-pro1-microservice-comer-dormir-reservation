@@ -60,7 +60,7 @@ public class CheckOutUseCase implements CheckOutInputPort {
         reservation.setStatus(ReservationStatus.FINISHED);
 
         //update reservation
-        reservation = reservationClientOutputPort.save(reservation);
+        reservation = checkOutOutputPort.updateState(reservation);
 
         //return the reservation
         return reservation;
