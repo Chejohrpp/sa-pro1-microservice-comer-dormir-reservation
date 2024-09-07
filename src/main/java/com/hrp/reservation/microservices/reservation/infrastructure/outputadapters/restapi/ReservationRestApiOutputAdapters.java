@@ -52,7 +52,7 @@ public class ReservationRestApiOutputAdapters implements CheckRoomPriceOutputPor
     public boolean updateAvailable(String hotelId, String roomNumber, boolean available) {
         RestClient restClient = RestClient.create();
         try{
-            String url = URL_HOTELS + hotelId + "/rooms/" + roomNumber + "/available";
+            String url = URL_HOTELS + hotelId + "/rooms/" + roomNumber + "/available/" + available ;
             ResponseEntity<Boolean> response = restClient.put()
                     .uri(url)
                     .retrieve()
