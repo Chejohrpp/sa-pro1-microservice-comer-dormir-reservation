@@ -3,8 +3,8 @@ package com.hrp.reservation.microservices.reservation.infrastructure.outputports
 import com.hrp.reservation.microservices.reservation.domain.Reservation;
 import com.hrp.reservation.microservices.reservation.infrastructure.outputadapters.db.ReservationEntity;
 
-public interface ReservationClientOutputPort {
-    Reservation save(Reservation reservation);
+import java.util.Optional;
 
-    boolean isReservation(Reservation reservation);
+public interface CheckInOutputPort {
+    Optional<Reservation> findById(Long id);
 }

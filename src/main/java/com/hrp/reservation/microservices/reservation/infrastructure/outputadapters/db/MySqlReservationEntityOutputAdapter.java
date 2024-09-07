@@ -3,14 +3,17 @@ package com.hrp.reservation.microservices.reservation.infrastructure.outputadapt
 import com.hrp.reservation.microservices.common.annotation.PersistenceAdapter;
 import com.hrp.reservation.microservices.reservation.domain.Reservation;
 import com.hrp.reservation.microservices.reservation.domain.ReservationStatus;
+import com.hrp.reservation.microservices.reservation.infrastructure.outputports.db.CheckInOutputPort;
+import com.hrp.reservation.microservices.reservation.infrastructure.outputports.db.CheckOutOutputPort;
 import com.hrp.reservation.microservices.reservation.infrastructure.outputports.db.ReservationClientOutputPort;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @PersistenceAdapter
-public class MySqlReservationEntityOutputAdapter implements ReservationClientOutputPort {
+public class MySqlReservationEntityOutputAdapter implements ReservationClientOutputPort, CheckInOutputPort, CheckOutOutputPort {
     private final JpaReservationEntityRepository jpaReservationEntityRepository;
 
     @Autowired
@@ -19,9 +22,9 @@ public class MySqlReservationEntityOutputAdapter implements ReservationClientOut
     }
 
     @Override
-    public ReservationEntity save(Reservation reservation) {
+    public Reservation save(Reservation reservation) {
         ReservationEntity reservationEntity = ReservationEntity.from(reservation);
-        return jpaReservationEntityRepository.save(reservationEntity);
+        return jpaReservationEntityRepository.save(reservationEntity).toDomain();
     }
 
     /**
@@ -61,5 +64,11 @@ public class MySqlReservationEntityOutputAdapter implements ReservationClientOut
     private boolean isOverlapping(LocalDateTime checkIn1, LocalDateTime checkOut1,
                                   LocalDateTime checkIn2, LocalDateTime checkOut2) {
         return (checkIn1.isBefore(checkOut2) && checkOut1.isAfter(checkIn2));
+    }
+
+    @Override
+    public Optional<Reservation> findById(Long id) {
+        return jpaReservationEntityRepository.findById(id)
+                .map(ReservationEntity:: toDomain);
     }
 }

@@ -41,6 +41,7 @@ public class ReservationClientUseCase implements ReservationClientInputPort {
             );
         }
 
+
         //to domain
         Reservation reservation = reservationClientRequest.toDomain(hotelid, roomNumber);
 
@@ -66,9 +67,9 @@ public class ReservationClientUseCase implements ReservationClientInputPort {
                 priceHistory.getPrice()));
 
         //save the reservation
-        reservation.setStatus(ReservationStatus.RESERVED);
-        ReservationEntity reservationEntity = reservationClientOutputPort.save(reservation);
-        priceHistory.setId(reservationEntity.getId());
+        reservation.setStatus(ReservationStatus.PENDING);
+        reservation = reservationClientOutputPort.save(reservation);
+        priceHistory.setId(reservation.getId());
 
         //save the price of the history
         savePriceHistoyOutputPort.savePriceHistoy(priceHistory);
