@@ -10,6 +10,7 @@ import com.hrp.reservation.microservices.reservation.infrastructure.inputports.R
 import com.hrp.reservation.microservices.reservation.infrastructure.outputadapters.db.ReservationEntity;
 import com.hrp.reservation.microservices.reservation.infrastructure.outputports.db.ReservationClientOutputPort;
 import com.hrp.reservation.microservices.reservation.infrastructure.outputports.restapi.CheckRoomPriceOutputPort;
+import com.hrp.reservation.microservices.reservation.infrastructure.outputports.restapi.CheckUserExistsOutputPort;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -21,12 +22,14 @@ public class ReservationClientUseCase implements ReservationClientInputPort {
     private final ReservationClientOutputPort reservationClientOutputPort;
     private final CheckRoomPriceOutputPort checkRoomPriceOutputPort;
     private final SavePriceHistoyOutputPort savePriceHistoyOutputPort;
+    private final CheckUserExistsOutputPort checkUserExistsOutputPort;
 
     @Autowired
-    public ReservationClientUseCase(ReservationClientOutputPort reservationClientOutputPort, CheckRoomPriceOutputPort checkRoomPriceOutputPort, SavePriceHistoyOutputPort savePriceHistoyOutputPort) {
+    public ReservationClientUseCase(ReservationClientOutputPort reservationClientOutputPort, CheckRoomPriceOutputPort checkRoomPriceOutputPort, SavePriceHistoyOutputPort savePriceHistoyOutputPort, CheckUserExistsOutputPort checkUserExistsOutputPort) {
         this.reservationClientOutputPort = reservationClientOutputPort;
         this.checkRoomPriceOutputPort = checkRoomPriceOutputPort;
         this.savePriceHistoyOutputPort = savePriceHistoyOutputPort;
+        this.checkUserExistsOutputPort = checkUserExistsOutputPort;
     }
 
     @Override
@@ -41,6 +44,10 @@ public class ReservationClientUseCase implements ReservationClientInputPort {
             );
         }
 
+        //verify if the client exists
+        if (!checkUserExistsOutputPort.checkUserExists(reservationClientRequest.getUsernameclient())){
+            throw new  EntityNotFoundException ("The client's not exists");
+        }
 
         //to domain
         Reservation reservation = reservationClientRequest.toDomain(hotelid, roomNumber);

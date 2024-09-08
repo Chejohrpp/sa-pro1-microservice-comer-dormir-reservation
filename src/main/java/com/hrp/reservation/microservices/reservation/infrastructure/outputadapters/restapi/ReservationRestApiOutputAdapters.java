@@ -2,6 +2,7 @@ package com.hrp.reservation.microservices.reservation.infrastructure.outputadapt
 
 import com.hrp.reservation.microservices.reservation.infrastructure.outputports.restapi.ChangeRoomState;
 import com.hrp.reservation.microservices.reservation.infrastructure.outputports.restapi.CheckRoomPriceOutputPort;
+import com.hrp.reservation.microservices.reservation.infrastructure.outputports.restapi.CheckUserExistsOutputPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -10,8 +11,9 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
 
 @Component
-public class ReservationRestApiOutputAdapters implements CheckRoomPriceOutputPort, ChangeRoomState {
+public class ReservationRestApiOutputAdapters implements CheckRoomPriceOutputPort, ChangeRoomState, CheckUserExistsOutputPort {
     private static final String URL_HOTELS = "http://localhost:8082/v1/hotels/";
+    private static final String URL_USERS = "http://localhost:8081/v1/users/";
     @Override
     public boolean existsByHotel(String hotelId, String roomNumber) {
         RestClient restClient = RestClient.create();
@@ -61,5 +63,27 @@ public class ReservationRestApiOutputAdapters implements CheckRoomPriceOutputPor
         }catch (RestClientResponseException e) {
             throw new IllegalArgumentException("something wrong change the available room status for the hotel");
         }
+    }
+
+    @Override
+    public boolean checkUserExists(String username) {
+        RestClient restClient = RestClient.create();
+        String url = URL_USERS + "exists/client?username="+username;
+        try {
+            restClient.head()
+                    .uri(url)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .retrieve()
+                    .toBodilessEntity();
+            return true;
+        } catch (RestClientResponseException e) {
+            if(e.getStatusCode().isSameCodeAs(HttpStatus.NOT_FOUND)) {
+                return false;
+            } else {
+                //handle trow if not already there
+                e.printStackTrace();
+            }
+        }
+        return false;
     }
 }
