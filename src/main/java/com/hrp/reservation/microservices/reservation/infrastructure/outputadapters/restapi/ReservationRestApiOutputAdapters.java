@@ -14,6 +14,10 @@ import org.springframework.web.client.RestClientResponseException;
 public class ReservationRestApiOutputAdapters implements CheckRoomPriceOutputPort, ChangeRoomState, CheckUserExistsOutputPort {
     private static final String URL_HOTELS = "http://localhost:8082/v1/hotels/";
     private static final String URL_USERS = "http://localhost:8081/v1/users/";
+    /*
+    private static final String URL_HOTELS = "http://hotel-microservice:8080/v1/hotels/";
+    private static final String URL_USERS = "http://user-microservice:8080/v1/users/";
+     */
     @Override
     public boolean existsByHotel(String hotelId, String roomNumber) {
         RestClient restClient = RestClient.create();
